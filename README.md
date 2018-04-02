@@ -94,13 +94,12 @@ So  the car now has an initial position of (0,0) and a heading of 0 relative to 
 
 ## Model Predictive Control with Latency
 
-To overcome the effect of latency, we simply predicted the state 100ms forward of the start time , using the update equations of the model. fs
+To overcome the effect of latency, we simply predicted the state 100ms forward of the start time , using the update equations of the model. 
 
 
 ## The vehicle must successfully drive a lap around the track.
-fs
-See video.
 
-
+See video. 
+![video](https://youtu.be/KRDEL9ER1is)
 
 
