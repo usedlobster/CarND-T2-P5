@@ -1,4 +1,4 @@
-# Model Predictive Control Project
+ # Model Predictive Control Project
 CarND-Controls-MPC, Self-Driving Car Engineer Nanodegree Program
 
 This project uses an MPC to drive a car around a simulated track, by calculating the required steering angle and throttle setting.
@@ -8,7 +8,7 @@ This project uses an MPC to drive a car around a simulated track, by calculating
 
 The MPC model is given a conditional state , a set of update equations ( that work on the state and actuator inputs ) and a cost function. The job of the MPC solver is to find the set of inputs that   minimize the cost function. The inputs that produced the minimal cost solution found, are the inputs to the simulator.
 
-#### State [x,y,ψ,v,cte,eψ]
+#### State [ x , y , ψ , v , cte , eψ ]
  
 The model we used had the following state variables.
 
@@ -33,7 +33,7 @@ The actuators we use are.
      	- ψ' = ψ + v*(δ/Lf)∗dt
      	- v' = v + a ∗ dt
 	- cte' = f(x) - y + v * sin( eψ ) * dt
-	- eψ' = ψ -  f'(x) + v * (δ/Lf) * dt
+	- eψ' = ψ -  atan( f'(x) ) + v * ( δ/Lf ) * dt
      
 `x_[t+1] = x[t] + v[t] * cos(psi[t]) * dt`
 
@@ -99,7 +99,7 @@ The actuators we use are.
 	* The code can be found in `main.cpp`.
 
 ### Other comments
-* Strangely, when tackling the case where there is 100ms latency, predicting the state 100ms ahead gave a worse outcome than not predicting the state.
+* 
 
 
 
