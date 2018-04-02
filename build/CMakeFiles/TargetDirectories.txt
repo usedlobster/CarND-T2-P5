@@ -1,0 +1,3 @@
+/home/wooster/ud/CarND-MPC-Project/build/CMakeFiles/edit_cache.dir
+/home/wooster/ud/CarND-MPC-Project/build/CMakeFiles/rebuild_cache.dir
+/home/wooster/ud/CarND-MPC-Project/build/CMakeFiles/mpc.dir
