@@ -19,7 +19,7 @@ The model we used had the following state variables.
 	- cte : the cross track error
 	- eψ : error psi 
 
-#### Actuators [ δ , a]
+#### Actuators [ δ , a ]
 
 The actuators we use are.
 
@@ -28,13 +28,17 @@ The actuators we use are.
 
 #### Update equations (Vehicle Dynamics)
 
+The new state' after dt seconds can be computed by 
+
      	- x' = x + v*cos(ψ)*dt 
      	- y' = y + v*sin(ψ)*dt
-     	- ψ' = ψ + v*(δ/Lf)∗dt
+     	- ψ' = ψ - v*( δ/Lf )∗dt
      	- v' = v + a ∗ dt
-	- cte' = f(x) - y + v * sin( eψ ) * dt
-	- eψ' = ψ -  atan( f'(x) ) + v * ( δ/Lf ) * dt
- 
+	- cte' = ( f(x) - y ) + v * sin( eψ ) 
+	* dt
+	- eψ' = ( ψ - atan( f'(x) ) - v * ( δ/Lf ) * dt
+
+the function f(x) - is the the path to follow.
 
 
 #### MPC Setup:
