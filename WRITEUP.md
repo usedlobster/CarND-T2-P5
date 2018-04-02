@@ -1,93 +1,105 @@
- # Model Predictive Control Project
-CarND-Controls-MPC, Self-Driving Car Engineer Nanodegree Program
+# Model Predictive Control Project
+### CarND-Controls-MPC, Self-Driving Car Engineer Nanodegree Program
 
-This project uses an MPC to drive a car around a simulated track, by calculating the required steering angle and throttle setting.
+This project uses MPC to control the steering and acceleration of a simulated car.
 
 ---
-## 1. MPC Model
+## The Model
 
-The MPC model is given a conditional state , a set of update equations ( that work on the state and actuator inputs ) and a cost function. The job of the MPC solver is to find the set of inputs that   minimize the cost function. The inputs that produced the minimal cost solution found, are the inputs to the simulator.
+From an initial given state, the MPC predicts N states ahead. The solver tries various different actuator inputs, and runs a cost function against each of the N states.
+The actuator inputs that produce the least value cost, are used as inputs to the  car.
 
-#### State [ x , y , ψ , v , cte , eψ ]
+#### State 
  
-The model we used had the following state variables.
+The model we used has the following state variables. 
 
-	- x : the car x-position 
-	- y : the car y-position
-	- ψ : psi - the vehicle heading 
-	- v : the velociy
-	- cte : the cross track error
-	- eψ : error psi 
+    * x : the car x-position 
+    * y : the car y-position
+    * ψ : psi - the vehicle heading 
+    * v : the velocity
+    * cte : the cross track error [distance from track ]
+    * eψ : error psi - the angle  difference between current heading and track.
 
 #### Actuators [ δ , a ]
 
-The actuators we use are.
+The actuators we use are. Where each is limited to the range +/- 1 .
 
-	- δ (the steering angle) [-1,+1 ]
-	- a ( combined throttle and brake pedals). [-1,+1 ]
+    * δ : delta - (the steering angle) [-1,+1 ]
+    * a : a - ( combined throttle and brake pedals ). [-1,+1 ]
 
-#### Update equations (Vehicle Dynamics)
+#### Update equations 
 
-The new state variables after dt seconds can be computed by the following update equations.
+The model uses the following equations to get the next state [ x' , y' , ψ' , v' , cte' , eψ' ],  from the current state [ x , y , ψ , v , cte , eψ ] after dt seconds.
 
-	- x' = x + v*cos(ψ)*dt 
-	- y' = y + v*sin(ψ)*dt
-	- ψ' = ψ - v*( δ/Lf )∗dt
-	- v' = v + a ∗ dt
-	- cte' = ( f(x) - y ) + v * sin( eψ ) * dt
-	- eψ' = ( ψ - atan( f'(x) ) - v * ( δ/Lf ) * dt
+	* x' = x + v*cos( ψ )*dt 
+	* y' = y + v*sin( ψ )*dt
+	* ψ' = ψ - v*( δ / Lf )∗dt
+	* v' = v + a ∗ dt
+	* cte' = ( f( x ) - y ) + v * sin( eψ ) * dt
+	* eψ' = ( ψ - tan( f'(x) ) - v * ( δ / Lf ) * dt
 
-the function f(x) - is the the current path we should be following.
+the function f(x) - is a polynomial giving the path the car should be following , and f'(x) is the derivative.
 
-#### MPC Setup:
-1. Define the length of the trajectory, N, and duration of each timestep, dt.
-    * See below for definitions of N, dt, and discussion on parameter tuning.
-* Define vehicle dynamics and actuator limitations along with other constraints.
-    * See the state, actuators and update equations above.
-* Define the cost function.
-    * Cost in this MPC increases with: (sece `MPC.cpp` lines 80-101)
-        * Difference from reference state (cross-track error, orientation and velocity)
-        * Use of actuators (steering angle and acceleration)
-        * Value gap between sequential actuators (change in steering angle and change in acceleration).
-    * We take the deviations and square them to penalise over and under-shooting equally.
-        * This may not be optimal.
-    * Each factor mentioned abov contributed to the cost in different proportions. We did this by multiplying the squared deviations by weights unique to each factor.
+#### Cost function
 
-#### MPC Loop:
-1. We **pass the current state** as the initial state to the model predictive controller.
-* We call the optimization solver. Given the initial state, the solver will ***return the vector of control inputs that minimizes the cost function**. The solver we'll use is called Ipopt.
-* We **apply the first control input to the vehicle**.
-* Back to 1.
+The cost function is a weighted sum of the error =  ( desired - actual  )^2 .
 
-*Reference: Setup and Loop description taken from Udacity's Model Predictive Control lesson.*p
+The cost function we use is critical as it guides the best values for [ δ , a ] to use . We don't want the model thinking it can just ramp out the velocity without consequence to going off course, 
+similarly we don't want the solver to thinking going at 0 speed is the answer.
+
+We therefore implemented the following cost function like this :-
+
+        fg[0] = 0;
+        for (int t = 0; t < N; t++) {
+            fg[0] += 476.0 * ( N-t ) * CppAD::pow(vars[MPC::start::cte  + t], 2);
+            fg[0] += 476.0 * ( N-t ) * CppAD::pow(vars[MPC::start::epsi + t], 2);
+            fg[0] += CppAD::pow(vars[MPC::start::v + t] - ref_velocity, 2);
+        }
+        for (int t = 0; t < N - 1; t++) {
+            fg[0] +=    2.0 * (N-t) * CppAD::pow(vars[MPC::start::delta + t], 2);
+            fg[0] +=    2.0 * (N-t) * CppAD::pow(vars[MPC::start::a + t], 2);
+        }
+        for (int t = 0; t < N - 2; t++) {
+            fg[0] +=   100.0 * CppAD::pow(vars[ MPC::start::delta + t + 1] - vars[MPC::start::delta + t], 2);
+            fg[0] +=    10.0 * CppAD::pow(vars[ MPC::start::a + t + 1] - vars[MPC::start::a + t], 2);
+
+The cost function rewards very small cte & epsi more heavily than the velocity. We use the weight 476 * ( N -  t ) to prefer reaching the optimum cte and epsi earlier.
+
+We also favour the δ & a terms to be 0 , this makes sense for  δ, 
+
+To prevent  δ & a actuators from changing we also weight so that they prefer to be constant thought the N steps.
 
 
-#### N and dt
-* N is the number of timesteps the model predicts ahead. As N increases, the model predicts further ahead.
-* dt is the length of each timestep. As dt decreases, the model re-evaluates its actuators more frequently. This may give more accurate predictions, but will use more computational power. If we keep N constant, the time horizon over which we predict ahead also decreases as dt decreases.
+## Timestep Length and Elapsed Duration ( N & dt )
 
-#### Tuning N and dt
-* I started with (N, dt) = (10, 0.1) (arbitrary starting point). The green panth would often curve to the right or left near the end, so I tried increasing N so the model would try to fit more of the upcoming path and would be penalised more if it curved off erratically after 10 steps.
-* Increasing N to 15 improved the fit and made the vehicle drive smoother. Would increasing N further improve performance?
-* Increasing N to 20 (dt = 0.1) made the vehicle weave more (drive less steadily) especially after the first turn. 
-    * The weaving was exacerbated with N = 50 - the vehicle couldn't even stay on the track for five seconds. 
-* Increasing dt to 0.2 (N = 10) made the vehicle too slow to respond to changes in lane curvature. E.g. when it reached the first turn, it only started steering left when it was nearly off the track. This delayed response is expected because it re-evaluates the model less frequently. 
-* Decreasing dt to 0.05 made the vehicle drive in a really jerky way.
-* So I chose N = 15, dt = 0.1.
-* It would be better to test variations in N and dt more rigorously and test different combinations of N, dt and the contributions of e.g. cross-track error to cost. 
-* It would also be good to discuss variations in N and dt without holding N or dt fixed at 10 and 0.1 respectively.
+The MPC uses N states at dt second intervals. 
 
-### Latency
-* If we don't add latency, the car will be steering and accelerating/braking based on what the model thinks it should've done 100ms ago. The car will respond too slowly to changes in its position and thus changes in cost. 
-	* It may not start steering e.g. left when it goes round a curve, leading it to veer off the track. 
-	* Likewise, it may continue steering even when the path stops curving. 
-	* The faster the vehicle speed, the worse the effects of latency that is unaccounted for.
-* **Implementation**: We used the kinematic model to predict the state 100ms ahead of time and then feed that predicted state into the MPC solver.
-	* We chose 100ms because that's the duration of the latency. That is, we try to predict where the car will be when our instructions reach the car so the steering angle and throttle will be appropriate for when our instructions reach the car (100ms later).
-	* The code can be found in `main.cpp`.
+The choice of N & dt is critical to performance. The product of N*dt gives us the total time ahead the predictions  are run.
 
-### Other comments
-* 
+Predicting too far into the future is a bit of a waste, and since conditions can change rapidly would probably be a waste. However to small a value and  upcoming changes ( such as a sharp bend ) may not get incorporated in-time.
+
+With N < 8 the solver had trouble fitting a solution, with N > 30 the solution was taking too long causing erratic behaviour of the car.
+
+We eventually settled for N = 12 , and dt = 0.06.  
+
+
+
+## Polynomial Fitting and MPC Preprocessing
+
+The world position way-points from the simulator, are translated to the location and orientation of the car. This is done by translating the way-points to the car , and then rotating them clockwise. This makes some of the mathematics easier, as now the car is travelling along the x-axis  , with the y axis increasing on the left. 
+
+So  the car now has an initial position of (0,0) and a heading of 0 relative to the way-points. Fitting a polynomial to the translated way-points, we can create a function f(x) where the result is the y position of the track ( relative to the car at 0 ). This means the initial cross-track error is simply f(0) , and initial gradient  is f'(0) and angle is atan( f'(0)) . 
+   
+
+
+## Model Predictive Control with Latency
+
+To overcome the effect of latency, we simply predicted the state 100ms forward of the start time , using the update equations of the model. fs
+
+
+## The vehicle must successfully drive a lap around the track.
+fs
+See video.
 
 
 

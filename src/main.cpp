@@ -224,6 +224,7 @@ int main() {
 
                     Eigen::VectorXd state(6);
 
+                    // state << 0 , 0 , 0 , v , cte , epsi ;
                     state << fwd_px, fwd_py, fwd_psi, fwd_v, fwd_cte, fwd_epsi ;
 
                     // UL : try to solve

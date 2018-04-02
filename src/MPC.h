@@ -9,10 +9,10 @@ using namespace std;
 
 // DONE: Set the timestep length and duration,
 
-const int N = 12	     ;
+const int N = 12 	    ;
 const double dt = 0.06   ;
 
-const double ref_velocity = 95.0 ;
+const double ref_velocity = 90.0 ;
 
 
 // This value assumes the model presented in the classroom is used.

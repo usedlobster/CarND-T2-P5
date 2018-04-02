@@ -218,8 +218,8 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
 
 
     for (int i = 0; i < N-1; i++) {
-        result.push_back(solution.x[MPC::start::x + i + 1 ]);
-        result.push_back(solution.x[MPC::start::y + i + 1 ]);
+        result.push_back(solution.x[MPC::start::x + i ]);
+        result.push_back(solution.x[MPC::start::y + i ]);
     }
 
 
