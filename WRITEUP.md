@@ -14,8 +14,8 @@ The model we used had the following state variables.
 
 	- x : the car x-position 
 	- y : the car y-position
-	- ψ : psi - the vehicle heading
-	- v : the velocity
+	- ψ : psi - the vehicle heading 
+	- v : the velociy
 	- cte : the cross track error
 	- eψ : error psi 
 
@@ -28,10 +28,11 @@ The actuators we use are.
 
 #### Update equations (Vehicle Dynamics)
 
-     - x = x + v\*cos(ψ)\* dt 
-     - y = y + v\*sin(ψ)\* dt
-     - ψ = ψ + ( v / Lf )*δ∗dt
+     - x = x + v*cos(ψ)*dt 
+     - y = y + v*sin(ψ)*dt
+     - ψ = ψ + (v/Lf)*δ∗dt
      - v = v + a ∗ dt
+     
 
 
 #### MPC Setup:
