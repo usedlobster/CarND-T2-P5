@@ -1,32 +1,23 @@
 # Model Predictive Control Project
 CarND-Controls-MPC, Self-Driving Car Engineer Nanodegree Program
 
-The objective of this project is to use model predictive control to enable a car to drive around a track in a simulator.
+objective
 
 ---
-## Table of contents
-
-This README contains information on:
-
-1. MPC Model
-    - Tuning parameters N, dt
-2. Files in this repo
-3. Dependencies
-4. Basic Build Instructions
-5. Notes from Udacity's README
-
-
 ## 1. MPC Model
 
 We will first describe the state, actuator and update equations (ingredients in the model) and then go on to describe the MPC model setup and loop. We will then discuss tuning parameters.
 
-#### State [x,y,ψ,v]
-Our state can be described using four components:
-1. x: the x-position
-- y: the y-position
-- ψ: the vehicle orientation
-- v: the velocity
+#### State [x,y,ψ,v,cte,eψ]
 
+The model we used had the following state variables.
+
+- x : the x-position
+- y : the y-position
+- ψ : psi - the vehicle heading
+- v : the velocity
+- cte : the cross track error
+- eψ : error psi - the dif
 #### Actuators [δ, a]
 * An actuator is a component that controls a system. Here we have two actuators: 
     * δ (the steering angle) and 
