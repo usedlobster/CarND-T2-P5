@@ -23,8 +23,8 @@ The model we used had the following state variables.
 
 The actuators we use are.
 
-    	- δ (the steering angle) [-1,+1 ]
-    	- a ( combined throttle and brake pedals). [-1,+1 ]
+	- δ (the steering angle) [-1,+1 ]
+	- a ( combined throttle and brake pedals). [-1,+1 ]
 
 #### Update equations (Vehicle Dynamics)
 
