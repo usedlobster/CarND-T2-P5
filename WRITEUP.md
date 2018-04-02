@@ -28,18 +28,16 @@ The actuators we use are.
 
 #### Update equations (Vehicle Dynamics)
 
-The new state' after dt seconds can be computed by 
+The new state variables after dt seconds can be computed by the following update equations.
 
-     	- x' = x + v*cos(ψ)*dt 
-     	- y' = y + v*sin(ψ)*dt
-     	- ψ' = ψ - v*( δ/Lf )∗dt
-     	- v' = v + a ∗ dt
-	- cte' = ( f(x) - y ) + v * sin( eψ ) 
-	* dt
+	- x' = x + v*cos(ψ)*dt 
+	- y' = y + v*sin(ψ)*dt
+	- ψ' = ψ - v*( δ/Lf )∗dt
+	- v' = v + a ∗ dt
+	- cte' = ( f(x) - y ) + v * sin( eψ ) * dt
 	- eψ' = ( ψ - atan( f'(x) ) - v * ( δ/Lf ) * dt
 
-the function f(x) - is the the path to follow.
-
+the function f(x) - is the the current path we should be following.
 
 #### MPC Setup:
 1. Define the length of the trajectory, N, and duration of each timestep, dt.
@@ -47,13 +45,13 @@ the function f(x) - is the the path to follow.
 * Define vehicle dynamics and actuator limitations along with other constraints.
     * See the state, actuators and update equations above.
 * Define the cost function.
-    * Cost in this MPC increases with: (see `MPC.cpp` lines 80-101)
+    * Cost in this MPC increases with: (sece `MPC.cpp` lines 80-101)
         * Difference from reference state (cross-track error, orientation and velocity)
         * Use of actuators (steering angle and acceleration)
         * Value gap between sequential actuators (change in steering angle and change in acceleration).
     * We take the deviations and square them to penalise over and under-shooting equally.
         * This may not be optimal.
-    * Each factor mentioned above contributed to the cost in different proportions. We did this by multiplying the squared deviations by weights unique to each factor.
+    * Each factor mentioned abov contributed to the cost in different proportions. We did this by multiplying the squared deviations by weights unique to each factor.
 
 #### MPC Loop:
 1. We **pass the current state** as the initial state to the model predictive controller.
@@ -61,7 +59,7 @@ the function f(x) - is the the path to follow.
 * We **apply the first control input to the vehicle**.
 * Back to 1.
 
-*Reference: Setup and Loop description taken from Udacity's Model Predictive Control lesson.*
+*Reference: Setup and Loop description taken from Udacity's Model Predictive Control lesson.*p
 
 
 #### N and dt
