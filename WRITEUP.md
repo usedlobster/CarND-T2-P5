@@ -9,15 +9,15 @@ This project uses an MPC to drive a car around a simulated track, by calculating
 The MPC model is given a conditional state , a set of update equations ( that work on the state and actuator inputs ) and a cost function. The job of the MPC solver is to find the set of inputs that   minimize the cost function. The inputs that produced the minimal cost solution found, are the inputs to the simulator.
 
 #### State [x,y,ψ,v,cte,eψ]
-
+ 
 The model we used had the following state variables.
 
-	x : the car x-position 
-	y : the car y-position
-	ψ : psi - the vehicle heading
-	v : the velocity
-	cte : the cross track error
-	eψ : error psi
+	- x : the car x-position 
+	- y : the car y-position
+	- ψ : psi - the vehicle heading
+	- v : the velocity
+	- cte : the cross track error
+	- eψ : error psi 
 
 #### Actuators [δ, a]
 
@@ -28,10 +28,10 @@ The actuators we use are.
 
 #### Update equations (Vehicle Dynamics)
 
-* x = x + v\*cos(ψ)\* dt 
-* y = y + v\*sin(ψ)\* dt
-* ψ = ψ + ( v / Lf )*δ∗dt
-* v=v+a∗dt
+     - x = x + v\*cos(ψ)\* dt 
+     - y = y + v\*sin(ψ)\* dt
+     - ψ = ψ + ( v / Lf )*δ∗dt
+     - v = v + a ∗ dt
 
 
 #### MPC Setup:
