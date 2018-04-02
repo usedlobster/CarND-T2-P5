@@ -1,34 +1,38 @@
 # Model Predictive Control Project
 CarND-Controls-MPC, Self-Driving Car Engineer Nanodegree Program
 
-objective
+This project uses an MPC to drive a car around a simulated track, by calculating the required steering angle and throttle setting.
 
 ---
 ## 1. MPC Model
 
-We will first describe the state, actuator and update equations (ingredients in the model) and then go on to describe the MPC model setup and loop. We will then discuss tuning parameters.
+The MPC model is given a conditional state , a set of update equations ( that work on the state and actuator inputs ) and a cost function. The job of the MPC solver is to find the set of inputs that minimize the cost function. The inputs that produced the minimal cost solution found, are the inputs to the simulator.
 
 #### State [x,y,ψ,v,cte,eψ]
 
 The model we used had the following state variables.
 
-- x : the x-position
-- y : the y-position
+- x : the car x-position 
+- y : the car y-position
 - ψ : psi - the vehicle heading
 - v : the velocity
 - cte : the cross track error
 - eψ : error psi - the dif
+
 #### Actuators [δ, a]
-* An actuator is a component that controls a system. Here we have two actuators: 
-    * δ (the steering angle) and 
-    * a (acceleration, i.e. throttle and brake pedals).
+
+The actuators we use are.
+
+    * δ (the steering angle) [-1,+1]
+    * a ( combined throttle and brake pedals). [-1,+1]
 
 #### Update equations (Vehicle Dynamics)
+
 * x = x + v\*cos(ψ)\* dt 
-* y = y + v sin(psi) dt
+* y = y + v\*sin(ψ)\* dt
+* ψ = ψ + ( v / Lf )*δ∗dt
 * v=v+a∗dt
-    * a in [-1,1]
-* ψ=ψ+(v/L_f)*δ∗dt
+
 
 #### MPC Setup:
 1. Define the length of the trajectory, N, and duration of each timestep, dt.
