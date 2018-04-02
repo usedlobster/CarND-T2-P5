@@ -12,12 +12,12 @@ The MPC model is given a conditional state , a set of update equations ( that wo
 
 The model we used had the following state variables.
 
-	- x : the car x-position 
-	- y : the car y-position
-	- ψ : psi - the vehicle heading
-	- v : the velocity
-	- cte : the cross track error
-	- eψ : error psi
+	x : the car x-position 
+	y : the car y-position
+	ψ : psi - the vehicle heading
+	v : the velocity
+	cte : the cross track error
+	eψ : error psi
 
 #### Actuators [δ, a]
 
