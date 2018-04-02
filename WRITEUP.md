@@ -19,7 +19,7 @@ The model we used had the following state variables.
 	- cte : the cross track error
 	- eψ : error psi 
 
-#### Actuators [δ, a]
+#### Actuators [ δ , a]
 
 The actuators we use are.
 
